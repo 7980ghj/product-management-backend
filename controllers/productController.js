@@ -1,6 +1,4 @@
 const Product = require("../models/Product");
-const fs = require("fs");
-const path = require("path");
 
 // @desc    Create a new product
 // @route   POST /api/products
@@ -33,7 +31,7 @@ const createProduct = async (req, res) => {
       discountPercentage: Number(discountPercentage) || 0,
       stockQuantity: Number(stockQuantity) || 0,
       description: description || "",
-      image: req.file ? req.file.path : '',
+      image: req.file.path,
       status: status || "Active",
     };
 
@@ -45,12 +43,6 @@ const createProduct = async (req, res) => {
       data: product,
     });
   } catch (error) {
-    if (req.file) {
-      fs.unlink(path.join(__dirname, "..", "uploads", req.file.filename), (err) => {
-        if (err) console.error("Error deleting file:", err);
-      });
-    }
-
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
@@ -182,12 +174,9 @@ const updateProduct = async (req, res) => {
     if (description !== undefined) updateData.description = description;
     if (status) updateData.status = status;
 
+    // If new image uploaded to Cloudinary
     if (req.file) {
-      const oldImagePath = path.join(__dirname, "..", product.productImage);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-      image: req.file ? req.file.path : '';
+      updateData.image = req.file.path;
     }
 
     // Recalculate final price
@@ -209,12 +198,6 @@ const updateProduct = async (req, res) => {
       data: updatedProduct,
     });
   } catch (error) {
-    if (req.file) {
-      fs.unlink(path.join(__dirname, "..", "uploads", req.file.filename), (err) => {
-        if (err) console.error("Error deleting file:", err);
-      });
-    }
-
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
@@ -242,11 +225,6 @@ const deleteProduct = async (req, res) => {
         success: false,
         message: "Product not found",
       });
-    }
-
-    const imagePath = path.join(__dirname, "..", product.productImage);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
     }
 
     await Product.findByIdAndDelete(req.params.id);
