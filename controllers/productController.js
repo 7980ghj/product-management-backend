@@ -31,8 +31,7 @@ const createProduct = async (req, res) => {
       discountPercentage: Number(discountPercentage) || 0,
       stockQuantity: Number(stockQuantity) || 0,
       description: description || "",
-      image: req.file.path,
-      status: status || "Active",
+image: req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : '',      status: status || "Active",
     };
 
     const product = await Product.create(productData);
@@ -178,9 +177,9 @@ const updateProduct = async (req, res) => {
     if (status) updateData.status = status;
 
     // If new image uploaded to Cloudinary
-    if (req.file) {
-      updateData.image = req.file.path;
-    }
+  if (req.file) {
+  updateData.image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+}
 
     // Recalculate final price
     const finalPrice = updateData.price || product.price;
