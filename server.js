@@ -30,8 +30,7 @@ app.use((req, res, next) => {
 });
 
 // Serve uploaded images as static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use('/uploads', express.static('uploads'));
 // Routes
 const productRoutes = require("./routes/productRoutes");
 app.use("/api/products", productRoutes);
