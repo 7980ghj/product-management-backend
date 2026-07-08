@@ -16,18 +16,22 @@ const createProduct = async (req, res) => {
       });
     }
 
+console.log("Body:", req.body);
+console.log("File:", req.file);
 
-
-    const productData = {
-      productName,
-      category,
-      brand: brand || "Unbranded",
-      price: Number(price),
-      discountPercentage: Number(discountPercentage) || 0,
-      stockQuantity: Number(stockQuantity) || 0,
-      description: description || "",
-image: req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : '',      status: status || "Active",
-    };
+const productData = {
+  productName,
+  category,
+  brand: brand || "Unbranded",
+  price: Number(price),
+  discountPercentage: Number(discountPercentage) || 0,
+  stockQuantity: Number(stockQuantity) || 0,
+  description: description || "",
+  productImage: req.file
+    ? `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`
+    : "",
+  status: status || "Active",
+};
 
     const product = await Product.create(productData);
 
@@ -159,34 +163,55 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    const { productName, category, brand, price, discountPercentage, stockQuantity, description, status } = req.body;
+    const {
+      productName,
+      category,
+      brand,
+      price,
+      discountPercentage,
+      stockQuantity,
+      description,
+      status,
+    } = req.body;
 
     const updateData = {};
+
     if (productName) updateData.productName = productName;
     if (category) updateData.category = category;
     if (brand) updateData.brand = brand;
     if (price) updateData.price = Number(price);
-    if (discountPercentage !== undefined) updateData.discountPercentage = Number(discountPercentage);
-    if (stockQuantity !== undefined) updateData.stockQuantity = Number(stockQuantity);
-    if (description !== undefined) updateData.description = description;
+    if (discountPercentage !== undefined)
+      updateData.discountPercentage = Number(discountPercentage);
+    if (stockQuantity !== undefined)
+      updateData.stockQuantity = Number(stockQuantity);
+    if (description !== undefined)
+      updateData.description = description;
     if (status) updateData.status = status;
 
-    // If new image uploaded to Cloudinary
-  if (req.file) {
-  updateData.image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-}
+    // Update image if uploaded
+    if (req.file) {
+      updateData.productImage = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+    }
 
     // Recalculate final price
     const finalPrice = updateData.price || product.price;
-    const finalDiscount = updateData.discountPercentage !== undefined
-      ? updateData.discountPercentage
-      : product.discountPercentage;
-    updateData.finalPrice = Math.round((finalPrice - (finalPrice * finalDiscount) / 100) * 100) / 100;
+    const finalDiscount =
+      updateData.discountPercentage !== undefined
+        ? updateData.discountPercentage
+        : product.discountPercentage;
+
+    updateData.finalPrice =
+      Math.round(
+        (finalPrice - (finalPrice * finalDiscount) / 100) * 100
+      ) / 100;
 
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       updateData,
-      { new: true, runValidators: true }
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     res.status(200).json({
@@ -198,7 +223,10 @@ const updateProduct = async (req, res) => {
     console.error("UPDATE PRODUCT ERROR:", error.message);
 
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((err) => err.message);
+      const messages = Object.values(error.errors).map(
+        (err) => err.message
+      );
+
       return res.status(400).json({
         success: false,
         message: messages.join(", "),
