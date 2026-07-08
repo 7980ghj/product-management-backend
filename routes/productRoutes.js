@@ -14,9 +14,18 @@ const {
 router.get("/stats/dashboard", getDashboardStats);
 
 // Product CRUD routes
-router.route("/")
-  .get(getAllProducts)
-  .post(upload.single("productImage"), createProduct);
+router.get("/", getAllProducts);
+
+router.post("/", function(req, res, next) {
+  upload.single("productImage")(req, res, function(err) {
+    if (err) {
+      console.error("MULTER/CLOUDINARY ERROR:", err.message);
+      console.error("FULL UPLOAD ERROR:", err);
+      return res.status(500).json({ success: false, message: "Image upload failed", error: err.message });
+    }
+    createProduct(req, res);
+  });
+});
 
 router.route("/:id")
   .get(getProductById)
