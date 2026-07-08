@@ -33,7 +33,7 @@ const createProduct = async (req, res) => {
       discountPercentage: Number(discountPercentage) || 0,
       stockQuantity: Number(stockQuantity) || 0,
       description: description || "",
-      productImage: `/uploads/${req.file.filename}`,
+      image: req.file ? req.file.path : '',
       status: status || "Active",
     };
 
@@ -187,7 +187,7 @@ const updateProduct = async (req, res) => {
       if (fs.existsSync(oldImagePath)) {
         fs.unlinkSync(oldImagePath);
       }
-      updateData.productImage = `/uploads/${req.file.filename}`;
+      image: req.file ? req.file.path : '';
     }
 
     // Recalculate final price
