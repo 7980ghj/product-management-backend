@@ -16,12 +16,7 @@ const createProduct = async (req, res) => {
       });
     }
 
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Product image is required",
-      });
-    }
+
 
     const productData = {
       productName,
