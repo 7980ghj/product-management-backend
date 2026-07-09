@@ -7,7 +7,6 @@ const connectDB = require("./config/db");
 // Load environment variables
 dotenv.config();
 
-console.log("CLOUDINARY:", process.env.CLOUDINARY_CLOUD_NAME || "MISSING", process.env.CLOUDINARY_API_KEY || "MISSING");
 
 // Connect to MongoDB
 connectDB();

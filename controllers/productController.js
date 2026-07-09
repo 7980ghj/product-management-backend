@@ -16,8 +16,7 @@ const createProduct = async (req, res) => {
       });
     }
 
-console.log("Body:", req.body);
-console.log("File:", req.file);
+
 
 const productData = {
   productName,
@@ -41,8 +40,6 @@ const productData = {
       data: product,
     });
   } catch (error) {
-    console.error("CREATE PRODUCT ERROR:", error.message);
-    console.error("FULL ERROR:", error);
 
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((err) => err.message);
@@ -220,7 +217,6 @@ const updateProduct = async (req, res) => {
       data: updatedProduct,
     });
   } catch (error) {
-    console.error("UPDATE PRODUCT ERROR:", error.message);
 
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map(
