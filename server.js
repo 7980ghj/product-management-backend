@@ -31,6 +31,8 @@ app.use((req, res, next) => {
 // Serve uploaded images as static files
 app.use('/uploads', express.static('uploads'));
 // Routes
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
 const productRoutes = require("./routes/productRoutes");
 app.use("/api/products", productRoutes);
 

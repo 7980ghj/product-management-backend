@@ -6,8 +6,6 @@ const createProduct = async (req, res) => {
   try {
     const { productName, category, brand, price, discountPercentage, stockQuantity, description, status } = req.body;
 
-    console.log("Request body:", req.body);
-    console.log("Request file:", req.file);
 
     if (!productName || !category || !price) {
       return res.status(400).json({

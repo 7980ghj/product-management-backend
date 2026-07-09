@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middleware/upload");
+const { protect } = require("../middleware/auth");
 const {
   createProduct,
   getAllProducts,
@@ -13,14 +14,13 @@ const {
 // Dashboard stats route (MUST be before /:id)
 router.get("/stats/dashboard", getDashboardStats);
 
-// Product CRUD routes
-router.route("/")
-  .get(getAllProducts)
-  .post(upload.single("productImage"), createProduct);
+// Public: anyone can view products
+router.get("/", getAllProducts);
+router.get("/:id", getProductById);
 
-router.route("/:id")
-  .get(getProductById)
-  .put(upload.single("productImage"), updateProduct)
-  .delete(deleteProduct);
+// Protected: only authenticated users can create/update/delete
+router.post("/", protect, upload.single("productImage"), createProduct);
+router.put("/:id", protect, upload.single("productImage"), updateProduct);
+router.delete("/:id", protect, deleteProduct);
 
 module.exports = router;
