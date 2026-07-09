@@ -24,8 +24,8 @@ const productData = {
   discountPercentage: Number(discountPercentage) || 0,
   stockQuantity: Number(stockQuantity) || 0,
   description: description || "",
- image: req.file ? `/uploads/${req.file.filename}` : '',
-  status: status || "Active",
+productImage: req.file ? `/uploads/${req.file.filename}` : '',  
+status: status || "Active",
 };
 
     const product = await Product.create(productData);
@@ -183,7 +183,8 @@ const updateProduct = async (req, res) => {
 
     // Update image if uploaded
     if (req.file) {
-    updateData.image = `/uploads/${req.file.filename}`;    }
+      updateData.productImage = `/uploads/${req.file.filename}`;
+   }
 
     // Recalculate final price
     const finalPrice = updateData.price || product.price;
