@@ -14,8 +14,11 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: ['https://product-management-frontend-1f37.vercel.app', 'http://localhost:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Log all incoming requests (for debugging)
