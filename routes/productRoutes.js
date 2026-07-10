@@ -11,16 +11,16 @@ const {
   getDashboardStats,
 } = require("../controllers/productController");
 
-// Dashboard stats route (MUST be before /:id)
-router.get("/stats/dashboard", getDashboardStats);
+// All routes require authentication
+router.get("/stats/dashboard", protect, getDashboardStats);
 
-// Public: anyone can view products
-router.get("/", getAllProducts);
-router.get("/:id", getProductById);
+router.route("/")
+  .get(protect, getAllProducts)
+  .post(protect, upload.single("productImage"), createProduct);
 
-// Protected: only authenticated users can create/update/delete
-router.post("/", protect, upload.single("productImage"), createProduct);
-router.put("/:id", protect, upload.single("productImage"), updateProduct);
-router.delete("/:id", protect, deleteProduct);
+router.route("/:id")
+  .get(protect, getProductById)
+  .put(protect, upload.single("productImage"), updateProduct)
+  .delete(protect, deleteProduct);
 
 module.exports = router;
